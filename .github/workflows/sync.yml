@@ -1,30 +1,19 @@
-name: Merge upstream
+name: Sync Fork
 
 on:
-  # 推送代码后触发
-  push:
-  # 定时任务触发，使用 cron 规则，这里默认一小时执行一次
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/30 * * * *' # every 30 minutes
+  workflow_dispatch: # on button click
 
 jobs:
-  merge:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Merge upstream
-        run: |
-          # 使用自己的用户名替换 username
-          #git config --global user.name 'username'
-          #git config --global user.email 'username@users.noreply.github.com'
-
-          git pull --unshallow
-
-          # 自行替换要同步的上游仓库地址
-          git remote add upstream https://github.com/Orz-3/QuantumultX.git
-          git fetch upstream
-
-          # 可以自定义要同步的分支
-          git checkout -b master origin/master
-          git merge --no-edit upstream/master
-          git push origin master
+      - uses: tgymnich/fork-sync@v1.8
+        with:
+          token: ${{ secrets.PAT }}
+          owner: breakheart
+          base: master
+          head: master
+          repo: QuantumultX-Orz3
+          
